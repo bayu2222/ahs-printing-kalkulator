@@ -1,0 +1,369 @@
+```html id="print05"
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AHS Printing Desk</title>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #0b1020, #111827, #1e1b4b);
+  color: white;
+  padding: 20px;
+  margin: 0;
+}
+
+.app {
+  max-width: 920px;
+  margin: auto;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 32px;
+  color: #c4b5fd;
+}
+
+.header p {
+  margin-top: 6px;
+  color: #9ca3af;
+  font-size: 14px;
+}
+
+.top-card,
+.bottom-card {
+  background: rgba(17, 24, 39, 0.92);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 18px;
+  padding: 20px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+}
+
+.top-card {
+  margin-bottom: 20px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.full {
+  grid-column: span 2;
+}
+
+label {
+  display: block;
+  font-size: 13px;
+  color: #cbd5e1;
+  margin-bottom: 6px;
+}
+
+input, select, button {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  box-sizing: border-box;
+  font-size: 14px;
+}
+
+input, select {
+  background: #ffffff;
+  color: #111827;
+}
+
+input::placeholder {
+  color: #6b7280;
+}
+
+button {
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 15px;
+}
+
+.btn-save {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: white;
+}
+
+.btn-clear {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+}
+
+.summary {
+  background: linear-gradient(135deg, rgba(99,102,241,0.12), rgba(139,92,246,0.12));
+  border: 1px solid rgba(139,92,246,0.25);
+  border-radius: 14px;
+  padding: 18px;
+  margin-top: 18px;
+  line-height: 1.7;
+  color: #e5e7eb;
+}
+
+.summary strong {
+  color: #c4b5fd;
+}
+
+.section-title {
+  font-size: 18px;
+  margin: 0 0 15px 0;
+  color: #ddd6fe;
+}
+
+.history-list {
+  max-height: 420px;
+  overflow-y: auto;
+}
+
+.history-item {
+  background: rgba(15, 23, 42, 0.95);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 12px;
+  line-height: 1.6;
+}
+
+.customer-name {
+  font-size: 15px;
+  font-weight: bold;
+  color: #fff;
+}
+
+.history-time {
+  font-size: 12px;
+  color: #93c5fd;
+  margin-bottom: 6px;
+}
+
+.empty {
+  text-align: center;
+  color: #6b7280;
+  padding: 20px;
+}
+
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .full {
+    grid-column: span 1;
+  }
+
+  .actions {
+    grid-template-columns: 1fr;
+  }
+
+  .header h1 {
+    font-size: 26px;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="header">
+    <h1>AHS Printing Desk</h1>
+    <p>Kalkulator order stiker printing • cepat, rapi, dan siap simpan transaksi</p>
+  </div>
+
+  <div class="top-card">
+    <div class="grid">
+      <div class="full">
+        <label>Nama Pemesan</label>
+        <input type="text" id="nama" placeholder="Masukkan nama customer">
+      </div>
+
+      <div>
+        <label>Panjang (cm)</label>
+        <input type="number" id="panjang" oninput="hitung()">
+      </div>
+
+      <div>
+        <label>Lebar (cm)</label>
+        <input type="number" id="lebar" oninput="hitung()">
+      </div>
+
+      <div>
+        <label>Jumlah PCS</label>
+        <input type="number" id="pcs" value="1" min="1" oninput="hitung()">
+      </div>
+
+      <div>
+        <label>Jasa Desain</label>
+        <input type="number" id="desain" value="0" oninput="hitung()">
+      </div>
+
+      <div class="full">
+        <label>Jenis Bahan</label>
+        <select id="bahan" onchange="hitung()">
+          <option value="110000">Camel Non Laminasi (110.000 / lembar)</option>
+          <option value="150000">Camel + Laminasi (150.000 / lembar)</option>
+          <option value="205000">Graftac Laminasi Biasa (205.000 / lembar)</option>
+          <option value="240000">Graftac Laminasi MaxDecal (240.000 / lembar)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="summary" id="hasil">Total: Rp 0</div>
+
+    <div class="actions">
+      <button class="btn-save" onclick="simpanTransaksi()">Simpan Transaksi</button>
+      <button class="btn-clear" onclick="hapusSemuaRiwayat()">Hapus Semua Riwayat</button>
+    </div>
+  </div>
+
+  <div class="bottom-card">
+    <h2 class="section-title">Riwayat Transaksi</h2>
+    <div class="history-list" id="riwayatList"></div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = "ahs_riwayat_printing";
+const TTL = 7 * 24 * 60 * 60 * 1000;
+const LEMBAR_PANJANG = 120;
+const LEMBAR_LEBAR = 80;
+const LUAS_LEMBAR = LEMBAR_PANJANG * LEMBAR_LEBAR;
+
+function formatRupiah(angka) {
+  return angka.toLocaleString("id-ID");
+}
+
+function formatTanggal(timestamp) {
+  const t = new Date(timestamp);
+  return t.toLocaleString("id-ID", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit"
+  });
+}
+
+function hitung() {
+  let nama = document.getElementById("nama").value.trim();
+  let p = Number(document.getElementById("panjang").value);
+  let l = Number(document.getElementById("lebar").value);
+  let pcs = Number(document.getElementById("pcs").value);
+  let hargaLembar = Number(document.getElementById("bahan").value);
+  let desain = Number(document.getElementById("desain").value);
+
+  if (!p || !l || !pcs) {
+    document.getElementById("hasil").innerHTML = "Total: Rp 0";
+    return null;
+  }
+
+  let luasOrder = p * l;
+  let totalLuas = luasOrder * pcs;
+  let persenPakai = totalLuas / LUAS_LEMBAR;
+  let total = (hargaLembar * persenPakai) + desain;
+
+  let markupKecil = 0;
+  if (p <= 40 || l <= 40) {
+    markupKecil = 0.15;
+    total += total * markupKecil;
+  }
+
+  let hargaPerPcs = total / pcs;
+
+  document.getElementById("hasil").innerHTML =
+    "<strong>Nama:</strong> " + (nama || "-") + "<br>" +
+    "<strong>Ukuran:</strong> " + p + " x " + l + " cm<br>" +
+    "<strong>PCS:</strong> " + pcs + "<br>" +
+    "<strong>Total Luas:</strong> " + totalLuas + " cm²<br>" +
+    "<strong>Pakai Bahan:</strong> " + (persenPakai * 100).toFixed(1) + "%<br>" +
+    "<strong>Markup Kecil:</strong> " + (markupKecil * 100) + "%<br>" +
+    "<strong>Harga/pcs:</strong> Rp " + formatRupiah(Math.round(hargaPerPcs)) + "<br>" +
+    "<strong>Total:</strong> Rp " + formatRupiah(Math.round(total));
+
+  return {
+    waktu: Date.now(),
+    nama: nama || "Tanpa Nama",
+    panjang: p,
+    lebar: l,
+    pcs,
+    totalLuas,
+    persenPakai: (persenPakai * 100).toFixed(1),
+    markupKecil: (markupKecil * 100),
+    hargaPerPcs: Math.round(hargaPerPcs),
+    total: Math.round(total)
+  };
+}
+
+function ambilRiwayat() {
+  let data = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+  let sekarang = Date.now();
+
+  data = data.filter(item => (sekarang - item.waktu) < TTL);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+
+  return data;
+}
+
+function simpanTransaksi() {
+  const data = hitung();
+  if (!data) return alert("Isi data dulu sebelum simpan transaksi.");
+
+  let riwayat = ambilRiwayat();
+  riwayat.unshift(data);
+
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(riwayat));
+  tampilkanRiwayat();
+}
+
+function tampilkanRiwayat() {
+  let riwayat = ambilRiwayat();
+  let box = document.getElementById("riwayatList");
+
+  if (!riwayat.length) {
+    box.innerHTML = '<div class="empty">Belum ada transaksi</div>';
+    return;
+  }
+
+  box.innerHTML = riwayat.map(item => `
+    <div class="history-item">
+      <div class="customer-name">${item.nama}</div>
+      <div class="history-time">${formatTanggal(item.waktu)}</div>
+      Ukuran: ${item.panjang} x ${item.lebar} cm<br>
+      PCS: ${item.pcs}<br>
+      Pakai Bahan: ${item.persenPakai}%<br>
+      Markup Kecil: ${item.markupKecil}%<br>
+      Harga/pcs: Rp ${formatRupiah(item.hargaPerPcs)}<br>
+      Total: Rp ${formatRupiah(item.total)}
+    </div>
+  `).join("");
+}
+
+function hapusSemuaRiwayat() {
+  if (confirm("Hapus semua riwayat transaksi?")) {
+    localStorage.removeItem(STORAGE_KEY);
+    tampilkanRiwayat();
+  }
+}
+
+tampilkanRiwayat();
+</script>
+
+</body>
+</html>
+```
