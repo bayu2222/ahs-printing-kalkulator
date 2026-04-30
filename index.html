@@ -1,4 +1,4 @@
-```html id="print05"
+```html
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -88,6 +88,27 @@ input::placeholder {
 button {
   cursor: pointer;
   font-weight: bold;
+}
+
+.checkbox-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+  background: rgba(255,255,255,0.05);
+  padding: 12px;
+  border-radius: 10px;
+}
+
+.checkbox-wrap input[type="checkbox"] {
+  width: auto;
+  transform: scale(1.2);
+}
+
+.checkbox-wrap label {
+  margin: 0;
+  color: #fff;
+  cursor: pointer;
 }
 
 .actions {
@@ -222,6 +243,13 @@ button {
           <option value="240000">Graftac Laminasi MaxDecal (240.000 / lembar)</option>
         </select>
       </div>
+
+      <div class="full">
+        <div class="checkbox-wrap">
+          <input type="checkbox" id="tidakCutting" onchange="hitung()">
+          <label for="tidakCutting">Tidak Cutting</label>
+        </div>
+      </div>
     </div>
 
     <div class="summary" id="hasil">Total: Rp 0</div>
@@ -244,6 +272,7 @@ const TTL = 7 * 24 * 60 * 60 * 1000;
 const LEMBAR_PANJANG = 120;
 const LEMBAR_LEBAR = 80;
 const LUAS_LEMBAR = LEMBAR_PANJANG * LEMBAR_LEBAR;
+const POTONG_CUTTING = 20000;
 
 function formatRupiah(angka) {
   return angka.toLocaleString("id-ID");
@@ -267,6 +296,7 @@ function hitung() {
   let pcs = Number(document.getElementById("pcs").value);
   let hargaLembar = Number(document.getElementById("bahan").value);
   let desain = Number(document.getElementById("desain").value);
+  let tidakCutting = document.getElementById("tidakCutting").checked;
 
   if (!p || !l || !pcs) {
     document.getElementById("hasil").innerHTML = "Total: Rp 0";
@@ -284,6 +314,12 @@ function hitung() {
     total += total * markupKecil;
   }
 
+  let potonganCutting = 0;
+  if (tidakCutting) {
+    potonganCutting = POTONG_CUTTING * persenPakai;
+    total -= potonganCutting;
+  }
+
   let hargaPerPcs = total / pcs;
 
   document.getElementById("hasil").innerHTML =
@@ -293,6 +329,7 @@ function hitung() {
     "<strong>Total Luas:</strong> " + totalLuas + " cm²<br>" +
     "<strong>Pakai Bahan:</strong> " + (persenPakai * 100).toFixed(1) + "%<br>" +
     "<strong>Markup Kecil:</strong> " + (markupKecil * 100) + "%<br>" +
+    "<strong>Tidak Cutting:</strong> " + (tidakCutting ? "-Rp " + formatRupiah(Math.round(potonganCutting)) : "Tidak") + "<br>" +
     "<strong>Harga/pcs:</strong> Rp " + formatRupiah(Math.round(hargaPerPcs)) + "<br>" +
     "<strong>Total:</strong> Rp " + formatRupiah(Math.round(total));
 
@@ -305,6 +342,7 @@ function hitung() {
     totalLuas,
     persenPakai: (persenPakai * 100).toFixed(1),
     markupKecil: (markupKecil * 100),
+    tidakCutting: tidakCutting ? ("-Rp " + formatRupiah(Math.round(potonganCutting))) : "Tidak",
     hargaPerPcs: Math.round(hargaPerPcs),
     total: Math.round(total)
   };
@@ -348,6 +386,7 @@ function tampilkanRiwayat() {
       PCS: ${item.pcs}<br>
       Pakai Bahan: ${item.persenPakai}%<br>
       Markup Kecil: ${item.markupKecil}%<br>
+      Tidak Cutting: ${item.tidakCutting}<br>
       Harga/pcs: Rp ${formatRupiah(item.hargaPerPcs)}<br>
       Total: Rp ${formatRupiah(item.total)}
     </div>
@@ -367,3 +406,5 @@ tampilkanRiwayat();
 </body>
 </html>
 ```
+
+::: 
